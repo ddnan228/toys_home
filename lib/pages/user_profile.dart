@@ -1,17 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:toys_home/pages/welcome_page.dart';
 import 'post_page.dart';
 import 'list_page.dart';
 import 'package:toys_home/components/bottom_appbar.dart';
 import 'package:toys_home/const_file.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:toys_home/components/rounded_button.dart';
 
 class UserProfile extends StatefulWidget {
+  UserProfile({this.email});
+
   static String id = 'user_profile';
+  final String email;
 
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _UserProfileState createState() => _UserProfileState(email: email);
 }
 
 class _UserProfileState extends State<UserProfile> {
+  _UserProfileState({this.email});
+
+  final _auth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
+  final String email;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        loggedInUser = user;
+      }
+    } catch (e) {
+      print('error in getCurrentUser on listpage');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +75,7 @@ class _UserProfileState extends State<UserProfile> {
                   CircleAvatar(
                     radius: 50.0,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: AssetImage('images/teddy-bear.png'),
+                    backgroundImage: AssetImage('images/girl.png'),
                   ),
                   Expanded(
                     child: Padding(
@@ -56,9 +85,9 @@ class _UserProfileState extends State<UserProfile> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Text(
-                            'User Email: doudou@gmail.com',
+                            'User Email: $email',
                             style: TextStyle(
-                                fontSize: 15.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -121,14 +150,23 @@ class _UserProfileState extends State<UserProfile> {
                       ),
                     ),
                   ],
-                )
-
-//              Container(
-//                margin: const EdgeInsets.all(4.0),
-//                color: Colors.lime[200],
-//                child: Row(),
-//              ),
                 ),
+            ),
+            SizedBox(
+              height: 200.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: RoundedButton(
+                colour: Colors.lime,
+                title: 'Log Out',
+                onPressed: (){
+                  _auth.signOut();
+                  Navigator.pushNamed(context, WelcomePage.id);
+
+                },
+              ),
+            ),
           ],
         ),
       ),
