@@ -12,7 +12,7 @@ import 'dart:io';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //void main() => runApp(PostPage());
 
@@ -39,10 +39,13 @@ class _PostPageState extends State<PostPage> {
   String contact;
   String description;
 
+  final notifications = FlutterLocalNotificationsPlugin(); // for notification
+
   @override
   void initState() {
     super.initState();
     getCurrentUser();
+    initializeNotification();
   }
 
   void getCurrentUser() async {
@@ -56,6 +59,21 @@ class _PostPageState extends State<PostPage> {
       print('error in getCurrentUser on postpage');
     }
   }
+
+  void initializeNotification(){
+    final settingsAndroid = AndroidInitializationSettings('app_icon');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload));
+    notifications.initialize(
+        InitializationSettings(settingsAndroid, settingsIOS),
+        onSelectNotification: onSelectNotification);
+  }
+
+  Future onSelectNotification(String payload) async => await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => ListPage()),
+  );
 
 
 
@@ -210,6 +228,7 @@ class _PostPageState extends State<PostPage> {
                   //'postThumbnail': _uploadedThumbnail,
                 });
                 uploadSpinner = false;
+                notifications.show(0, 'New Post', title, _ongoing);
                 Navigator.pop(context);
               }
             },
@@ -344,6 +363,21 @@ class _PostPageState extends State<PostPage> {
     catch(e){
       print('error in uploading image to storage.');
     }
+  }
+
+
+  NotificationDetails get _ongoing{
+    final androidChannelSpecifics = AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.Max,
+      priority: Priority.High,
+      ongoing: true,
+      autoCancel: false,
+    );
+    final iOSChannelSpecifics = IOSNotificationDetails();
+    return NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
   }
   
 }

@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toys_home/components/post_box.dart';
 import 'post_detail.dart';
 
+
 class ListPage extends StatefulWidget {
   static String id = 'list_page';
 
