@@ -39,14 +39,15 @@ class PostBox extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
                         '$title',
                         style: TextStyle(
-                            fontSize: 20.0,
+                            fontFamily: 'IndieF',
+                            fontSize: 18.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal),
+                            color: Colors.orange[800]),
                       ),
                       Row(
                         children: <Widget>[
@@ -69,7 +70,10 @@ class PostBox extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text('From $user'),
+                      Text('From $user',style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                      ),),
                     ],
                   ),
                 ),

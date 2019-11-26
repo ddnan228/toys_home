@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 children: <Widget>[
                   SizedBox(
-                    height: 100.0,
+                    height: 75.0,
                   ),
                   Center(
                     child: Hero(
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                         message,
                         style: TextStyle(
                           color: Colors.grey[700],
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                         ),
                       ),
                     ),

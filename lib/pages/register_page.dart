@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 children: <Widget>[
                   SizedBox(
-                    height: 100.0,
+                    height: 75.0,
                   ),
                   Center(
                     child: Hero(

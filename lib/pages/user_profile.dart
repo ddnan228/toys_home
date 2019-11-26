@@ -153,7 +153,7 @@ class _UserProfileState extends State<UserProfile> {
                 ),
             ),
             SizedBox(
-              height: 200.0,
+              height: 20.0,
             ),
             Padding(
               padding: const EdgeInsets.all(40.0),

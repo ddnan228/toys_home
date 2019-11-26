@@ -117,7 +117,7 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             SizedBox(
-              height: 20.0,
+              height: 8.0,
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
@@ -152,7 +152,7 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             SizedBox(
-              height: 20.0,
+              height: 8.0,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
@@ -168,7 +168,7 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 8.0,
             ),
             Row(
               children: <Widget>[
