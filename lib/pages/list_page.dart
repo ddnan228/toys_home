@@ -83,7 +83,7 @@ class _ListPageState extends State<ListPage> {
               List<PostBox> postWidgets = [];
               for (var post in posts) {
                 final postWidget = PostBox(
-                  user: loggedInUser.email,
+                  user: post.data['userEmail'],
                   title: post.data['postTitle'],
                   price: post.data['postPrice'],
                   contact: post.data['postContact'],
@@ -92,7 +92,7 @@ class _ListPageState extends State<ListPage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) {
                       return PostDetail(
                         title: post.data['postTitle'],
-                        user: loggedInUser.email,
+                        user: post.data['userEmail'],
                         price: post.data['postPrice'],
                         contact: post.data['postContact'],
                         description: post.data['postDescription'],

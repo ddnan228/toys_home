@@ -69,10 +69,13 @@ class PostDetail extends StatelessWidget {
                     ),
                   )),
             ),
-            textBox('price: $price'),
+            textBox('Price\$ $price'),
+            Divider(color: Colors.orangeAccent),
             textBox('Contact to $contact'),
-            textBox('Decription: $description'),
-            textBox('Posted by $user'),
+            Divider(color: Colors.orangeAccent),
+            textBox('$description'),
+            Divider(color: Colors.orangeAccent),
+            fromBox('Posted by $user'),
           ],
         ),
       ),
@@ -88,6 +91,21 @@ class PostDetail extends StatelessWidget {
           style: TextStyle(
             fontSize: 15.0,
             color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget fromBox(String t) {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+        child: Text(
+          t,
+          style: TextStyle(
+            fontSize: 12.0,
+            color: Colors.grey,
           ),
         ),
       ),

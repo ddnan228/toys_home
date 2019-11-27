@@ -209,8 +209,9 @@ class _PostPageState extends State<PostPage> {
                   contact != null &&
                   contact != '') {
 
-                uploadSpinner = true;
-
+                setState(() {
+                  uploadSpinner = true;
+                });
                 // upload image
                 if(imageFile != null){
                   await uploadImage(imageFile);
