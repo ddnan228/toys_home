@@ -4,6 +4,7 @@ import 'pages/post_page.dart';
 import 'pages/log_in_page.dart';
 import 'pages/welcome_page.dart';
 import 'pages/user_profile.dart';
+import 'pages/my_posts.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,6 +25,8 @@ class _MyAppState extends State<MyApp> {
         PostPage.id: (context) => PostPage(),
         UserProfile.id: (context) => UserProfile(),
         LoginPage.id: (context) => LoginPage(),
+        MyPostsPage.id: (context) => MyPostsPage(),
+
 
       },
     );

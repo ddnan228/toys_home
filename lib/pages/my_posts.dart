@@ -7,15 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toys_home/components/post_box.dart';
 import 'post_detail.dart';
 
-
-class ListPage extends StatefulWidget {
-  static String id = 'list_page';
+class MyPostsPage extends StatefulWidget {
+  static String id = 'my_posts';
 
   @override
-  _ListPageState createState() => _ListPageState();
+  _MyPostsPageState createState() => _MyPostsPageState();
 }
 
-class _ListPageState extends State<ListPage> {
+class _MyPostsPageState extends State<MyPostsPage> {
   final _firestore = Firestore.instance;
   final _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
@@ -57,17 +56,22 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ListPage',
+      title: 'My Posts',
       home: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.toys),
+          backgroundColor: Colors.lime,
+          leading: FlatButton(
             onPressed: () {
-              //postsStream();
+              Navigator.pop(
+                context,
+              );
             },
+            child: Icon(
+              Icons.backspace,
+              color: Colors.white,
+            ),
           ),
-          backgroundColor: Colors.amber[400],
-          title: Text('Find A Toy'),
+          title: Text('My Posts'),
         ),
         body: StreamBuilder<QuerySnapshot>(
             stream: _firestore.collection('doudouPosts').snapshots(),
@@ -82,27 +86,30 @@ class _ListPageState extends State<ListPage> {
               final posts = snapshot.data.documents;
               List<PostBox> postWidgets = [];
               for (var post in posts) {
-                final postWidget = PostBox(
-                  user: post.data['userEmail'],
-                  title: post.data['postTitle'],
-                  price: post.data['postPrice'],
-                  contact: post.data['postContact'],
-                  imageUrl: post.data['postThumbnail'],
-                  colour: Colors.amber[200],
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return PostDetail(
-                        title: post.data['postTitle'],
-                        user: post.data['userEmail'],
-                        price: post.data['postPrice'],
-                        contact: post.data['postContact'],
-                        description: post.data['postDescription'],
-                        imageUrl: post.data['postImageUrl'],
-                      );
-                    }));
-                  },
-                );
-                postWidgets.add(postWidget);
+                if(post.data['userEmail'] == loggedInUser.email) {
+                  final postWidget = PostBox(
+                    user: post.data['userEmail'],
+                    title: post.data['postTitle'],
+                    price: post.data['postPrice'],
+                    contact: post.data['postContact'],
+                    imageUrl: post.data['postThumbnail'],
+                    colour: Colors.lime[200],
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                            return PostDetail(
+                              title: post.data['postTitle'],
+                              user: post.data['userEmail'],
+                              price: post.data['postPrice'],
+                              contact: post.data['postContact'],
+                              description: post.data['postDescription'],
+                              imageUrl: post.data['postImageUrl'],
+                            );
+                          }));
+                    },
+                  );
+                  postWidgets.add(postWidget);
+                }
               }
               return Align(
                 alignment: Alignment.topCenter,
@@ -113,18 +120,7 @@ class _ListPageState extends State<ListPage> {
                 ),
               );
             }),
-        bottomNavigationBar: Cus_BottomAppBar(
-          colour: Colors.amber[400],
-          first_icon_color: Colors.white,
-          third_icon_color: Colors.black12,
-          third_Onpressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return UserProfile(email: loggedInUser.email,);
-            }));
-          },
-        ),
       ),
     );
-
   }
 }

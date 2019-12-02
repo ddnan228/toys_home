@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:toys_home/components/rounded_button.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -39,6 +41,8 @@ class _PostPageState extends State<PostPage> {
   String contact;
   String description;
 
+  String locationInfo = 'Optional';
+
   final notifications = FlutterLocalNotificationsPlugin(); // for notification
 
   @override
@@ -60,7 +64,7 @@ class _PostPageState extends State<PostPage> {
     }
   }
 
-  void initializeNotification(){
+  void initializeNotification() {
     final settingsAndroid = AndroidInitializationSettings('app_icon');
     final settingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: (id, title, body, payload) =>
@@ -71,11 +75,9 @@ class _PostPageState extends State<PostPage> {
   }
 
   Future onSelectNotification(String payload) async => await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ListPage()),
-  );
-
-
+        context,
+        MaterialPageRoute(builder: (context) => ListPage()),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +172,45 @@ class _PostPageState extends State<PostPage> {
             SizedBox(
               height: 8.0,
             ),
+//            Row(
+//              children: <Widget>[
+//                SizedBox(
+//                  width: 20.0,
+//                ),
+//                Material(
+//                  elevation: 5.0,
+//                  color: Colors.green[200],
+//                  borderRadius: BorderRadius.circular(15.0),
+//                  child: MaterialButton(
+//                    onPressed: () {
+//                      //todo
+//                    },
+//                    minWidth: 100,
+//                    height: 30.0,
+//                    child: Text(
+//                      'Show your location',
+//                      style: TextStyle(
+//                        color: Colors.black,
+//                      ),
+//                    ),
+//                  ),
+//                ),
+//                SizedBox(
+//                  width: 10.0,
+//                ),
+//                Text(
+//                  locationInfo,
+//                  style: TextStyle(
+//                    fontSize: 15,
+//                    color: Colors.green[800],
+//                    fontWeight: FontWeight.bold,
+//                  ),
+//                ),
+//              ],
+//            ),
+//            SizedBox(
+//              height: 8.0,
+//            ),
             Row(
               children: <Widget>[
                 Padding(
@@ -208,12 +249,11 @@ class _PostPageState extends State<PostPage> {
                   price != '' &&
                   contact != null &&
                   contact != '') {
-
                 setState(() {
                   uploadSpinner = true;
                 });
                 // upload image
-                if(imageFile != null){
+                if (imageFile != null) {
                   await uploadImage(imageFile);
                 }
 
@@ -226,7 +266,7 @@ class _PostPageState extends State<PostPage> {
                   'postDescription': description,
                   'postTime': DateTime.now(),
                   'postImageUrl': _uploadedImageUrl,
-                  //'postThumbnail': _uploadedThumbnail,
+                  'postThumbnail': _uploadedThumbnail,
                 });
                 uploadSpinner = false;
                 notifications.show(0, 'New Post', title, _ongoing);
@@ -326,48 +366,40 @@ class _PostPageState extends State<PostPage> {
     });
     Navigator.of(context).pop();
   }
-  
+
   Future<void> uploadImage(file) async {
     try {
-
-
       var uuid = Uuid().v1();
       StorageReference _storageRef = FirebaseStorage.instance
-          .ref().child('DoudouAppImages').child('postImages').child(
-          'pose_$uuid.jpg');
+          .ref()
+          .child('DoudouAppImages')
+          .child('postImages')
+          .child('pose_$uuid.jpg');
       StorageUploadTask uploadTask = _storageRef.putFile(file);
       _uploadedImageUrl =
-      await(await uploadTask.onComplete).ref.getDownloadURL();
+          await (await uploadTask.onComplete).ref.getDownloadURL();
 
-      print(_uploadedImageUrl);
+      //generate thumbnail and upload thumbnail
+      img.Image image = img.decodeImage(file.readAsBytesSync());
+      img.Image thumbnail = img.copyResize(image, width: 120);
+      await File('${file.path}.png')
+        ..writeAsBytesSync(img.encodePng(thumbnail));
 
-//      File _thumbnailFile = await FlutterNativeImage.compressImage(file, targetWidth: 120);
-//      print(1);
-//
-////      img.Image currImage = img.decodeImage(file.readAsBytesSync());
-////      print(1);
-////      img.Image _thumbnail = img.copyResize(currImage, width: 120);
-////      print(2);
-////      File thumFile;
-////      print(3);
-////      //await thumFile.writeAsBytesSync(img.encodePng(_thumbnail));
-////      print(4);
-//
-//      StorageReference _storageRef2 = FirebaseStorage.instance
-//          .ref().child('DoudouAppImages').child('postImages').child(
-//          'pose_thumbnail_$uuid.png');
-//      StorageUploadTask uploadTask2 = _storageRef.putFile(_thumbnailFile);
-//      _uploadedThumbnail = await(await uploadTask2.onComplete).ref.getDownloadURL();
-//
-//      print(_uploadedThumbnail);
-    }
-    catch(e){
+      StorageReference _storageRef2 = FirebaseStorage.instance
+          .ref()
+          .child('DoudouAppImages')
+          .child('postImages')
+          .child('pose_thumbnail_$uuid.png');
+      StorageUploadTask uploadTask2 =
+          _storageRef2.putFile(File('${file.path}.png'));
+      _uploadedThumbnail =
+          await (await uploadTask2.onComplete).ref.getDownloadURL();
+    } catch (e) {
       print('error in uploading image to storage.');
     }
   }
 
-
-  NotificationDetails get _ongoing{
+  NotificationDetails get _ongoing {
     final androidChannelSpecifics = AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -380,5 +412,4 @@ class _PostPageState extends State<PostPage> {
     final iOSChannelSpecifics = IOSNotificationDetails();
     return NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
   }
-  
 }

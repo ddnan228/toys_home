@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toys_home/pages/my_posts.dart';
 import 'package:toys_home/pages/welcome_page.dart';
 import 'post_page.dart';
 import 'list_page.dart';
@@ -96,69 +97,26 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               ),
             ),
-            Container(
-                height: 100,
-                color: Colors.lime[300],
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                          margin: const EdgeInsets.fromLTRB(4.0, 4.0, 2.0, 4.0),
-                          color: Colors.lime[200],
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Text(
-                                'My Posts',
-                                style: text_style_user_post.copyWith(
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Text(
-                                '3',
-                                style: text_style_user_post.copyWith(
-                                  color: Colors.lime[900],
-                                  fontSize: 30.0,
-                                ),
-                              ),
-                            ],
-                          )),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(2.0, 4.0, 4.0, 4.0),
-                        color: Colors.lime[200],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              'My Liked',
-                              style: text_style_user_post.copyWith(
-                                color: Colors.black,
-                              ),
-                            ),
-                            Text(
-                              '15',
-                              style: text_style_user_post.copyWith(
-                                color: Colors.lime[900],
-                                fontSize: 30.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-            ),
-            SizedBox(
-              height: 20.0,
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Divider(
+                color: Colors.grey,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.all(10.0),
               child: RoundedButton(
                 colour: Colors.lime,
+                title: 'My Posts',
+                onPressed: (){
+                  Navigator.pushNamed(context, MyPostsPage.id);
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: RoundedButton(
+                colour: Colors.red[200],
                 title: 'Log Out',
                 onPressed: (){
                   _auth.signOut();

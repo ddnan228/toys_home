@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class PostBox extends StatelessWidget {
-  PostBox({this.user, this.title, this.price, this.contact, this.onPressed, this.imageUrl});
+  PostBox({this.user, this.title, this.price, this.contact, this.onPressed, this.imageUrl, this.colour});
 
   final String user;
   final String title;
@@ -10,6 +10,7 @@ class PostBox extends StatelessWidget {
   final String contact;
   final Function onPressed;
   final String imageUrl;
+  final Color colour;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class PostBox extends StatelessWidget {
         child: Material(
           borderRadius: BorderRadius.circular(30.0),
           elevation: 3.0,
-          color: Colors.amber[200],
+          color: colour,
           child: Row(
             children: <Widget>[
               SizedBox(

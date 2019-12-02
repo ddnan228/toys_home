@@ -19,7 +19,8 @@ dependencies:
   firebase_storage: ^3.0.8
   image_picker: ^0.6.2+1
   uuid: 2.0.4
-  image: ^2.1.9
+  image: ^2.1.4
+  flutter_image_compress: ^0.6.3
 
   flutter_local_notifications: ^0.8.4+3
 
