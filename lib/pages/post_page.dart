@@ -14,6 +14,7 @@ import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 import 'package:toys_home/components/rounded_button.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:toys_home/components/labels_row.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -44,7 +45,7 @@ class _PostPageState extends State<PostPage> {
 
   List<String> image_labels = [];
   List<Color> label_values = [];
-  String checked_labels = '';
+  List<String> checked_labels = [];
 
   String locationInfo = 'Optional';
 
@@ -223,15 +224,6 @@ class _PostPageState extends State<PostPage> {
                 if (imageFile != null) {
                   await uploadImage(imageFile);
                 }
-
-                // save the checked labels into new list
-                List<String> labels = [];
-                for (var i = 0; i < label_values.length; i++) {
-                  if (label_values[i] == Colors.lightBlue) {
-                    labels.add(image_labels[i]);
-                  }
-                }
-
                 //post a new one, upload to database
                 await _firestore.collection('doudouPosts').add({
                   'userEmail': loggedInUser.email,
@@ -242,7 +234,7 @@ class _PostPageState extends State<PostPage> {
                   'postTime': DateTime.now(),
                   'postImageUrl': _uploadedImageUrl,
                   'postThumbnail': _uploadedThumbnail,
-                  'postLabels': labels,
+                  'postLabels': checked_labels,
                 });
                 uploadSpinner = false;
                 notifications.show(0, 'New Post', title, _ongoing);
@@ -290,20 +282,41 @@ class _PostPageState extends State<PostPage> {
                   },
                 ),
                 //SizedBox(height: 10.0,),
-                Text(
-                  checked_labels,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.teal,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                get_all_label_Columns(),
               ],
             ),
           ),
         ],
       );
     }
+  }
+
+  Widget get_all_label_Columns() {
+    if (checked_labels == null) {
+      return Container();
+    }
+    List<Widget> lists = [];
+    var num = checked_labels.length;
+    var i = 0;
+    for (; i < num - 2; i = i + 2) {
+      lists.add(LablesRow(
+        labels: checked_labels.sublist(i, i + 2),
+        len: 2,
+        align: MainAxisAlignment.center,
+        colour: Colors.green,
+        fontsize: 15.0,
+      ));
+    }
+    lists.add(LablesRow(
+      labels: checked_labels.sublist(i, num),
+      len: num - i,
+      align: MainAxisAlignment.center,
+      colour: Colors.green,
+      fontsize: 15.0,
+    ));
+    return Column(
+      children: lists,
+    );
   }
 
   Future<void> _showLabels(BuildContext context) async {
@@ -343,10 +356,10 @@ class _PostPageState extends State<PostPage> {
               actions: <Widget>[
                 FlatButton(
                   onPressed: () {
-                    checked_labels = '';
+                    checked_labels.clear();
                     for (var j = 0; j < label_values.length; j++) {
                       if (label_values[j] == Colors.lightBlue) {
-                        checked_labels += image_labels[j] + '\n';
+                        checked_labels.add(image_labels[j]);
                       }
                     }
                     this.setState(() {});

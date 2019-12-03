@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toys_home/components/labels_row.dart';
 
 class PostBox extends StatelessWidget {
   PostBox(
@@ -19,7 +21,6 @@ class PostBox extends StatelessWidget {
   final String imageUrl;
   final Color colour;
   final List<dynamic> labels;
-  String label_text = '';
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class PostBox extends StatelessWidget {
                 width: 10.0,
               ),
               CircleAvatar(
-                radius: 30.0,
+                radius: 35.0,
                 backgroundColor: Colors.transparent,
                 backgroundImage: imageUrl == null
                     ? AssetImage('images/teddy-bear_default_icon.png')
@@ -90,7 +91,13 @@ class PostBox extends StatelessWidget {
                           ),
                         ],
                       ),
-                      get_labels(),
+                      LablesRow(
+                        labels: labels,
+                        len: 3,
+                        align: MainAxisAlignment.start,
+                        colour: Colors.orange,
+                        fontsize: 13.0,
+                      ),
                       Text(
                         'From $user',
                         style: TextStyle(
@@ -102,53 +109,9 @@ class PostBox extends StatelessWidget {
                   ),
                 ),
               ),
-
-
-
-
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget get_labels() {
-    if (labels == null) {
-      return Container();
-    }
-
-    var num = labels.length;
-    if (num > 3) {
-      num = 3;
-    }
-    List<Widget> boxes = [];
-    for (var i = 0; i < num; i++) {
-      boxes.add(Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Material(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.orange,
-          child: Container(
-            child: Center(
-              child: Text(
-                labels[i].toString(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ));
-    }
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: Row(
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //crossAxisAlignment: CrossAxisAlignment.end,
-        children: boxes,
       ),
     );
   }

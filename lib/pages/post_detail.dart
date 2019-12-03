@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'list_page.dart';
-
-//main() => runApp(PostDetail());
+import 'package:toys_home/components/labels_row.dart';
 
 class PostDetail extends StatelessWidget {
   PostDetail(
@@ -75,7 +73,7 @@ class PostDetail extends StatelessWidget {
             SizedBox(
               height: 10.0,
             ),
-            label_boxes(),
+            get_all_label_row(),
             Divider(color: Colors.orangeAccent),
             textBox('Price\$ $price'),
             Divider(color: Colors.orangeAccent),
@@ -90,24 +88,50 @@ class PostDetail extends StatelessWidget {
     );
   }
 
-  Widget label_boxes(){
-    if(labels == null){
+  Widget get_all_label_row() {
+    if (labels == null) {
+      return Container();
+    }
+    List<Widget> lists = [];
+    var num = labels.length;
+    var i = 0;
+    for (; i < num - 4; i = i + 4) {
+      lists.add(LablesRow(
+        labels: labels.sublist(i, i + 4),
+        len: 4,
+        align: MainAxisAlignment.center,
+        colour: Colors.orange,
+        fontsize: 15.0,
+      ));
+    }
+    lists.add(LablesRow(
+      labels: labels.sublist(i, num),
+      len: num - i,
+      align: MainAxisAlignment.center,
+      colour: Colors.orange,
+      fontsize: 15.0,
+    ));
+    return Column(
+      children: lists,
+    );
+  }
+
+  Widget label_boxes() {
+    if (labels == null) {
       return Center(child: Text('No labels'));
     }
     List<Widget> boxes = [];
     var num = labels.length;
-    if(num > 4){
+    if (num > 4) {
       num = 4;
     }
-    for(var i = 0; i < num; i++){
+    for (var i = 0; i < num; i++) {
       boxes.add(Container(
         padding: EdgeInsets.all(3.0),
         child: FlatButton(
           color: Colors.black12,
           child: Text(labels[i].toString()),
-          onPressed: (){
-
-          },
+          onPressed: () {},
         ),
       ));
     }
