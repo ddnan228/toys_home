@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'list_page.dart';
 
 //main() => runApp(PostDetail());
@@ -10,7 +11,8 @@ class PostDetail extends StatelessWidget {
       this.title,
       this.contact,
       this.description,
-      this.imageUrl});
+      this.imageUrl,
+      this.labels});
 
   final String user;
   final String title;
@@ -18,6 +20,7 @@ class PostDetail extends StatelessWidget {
   final String contact;
   final String description;
   final String imageUrl;
+  final List<dynamic> labels;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +72,11 @@ class PostDetail extends StatelessWidget {
                     ),
                   )),
             ),
+            SizedBox(
+              height: 10.0,
+            ),
+            label_boxes(),
+            Divider(color: Colors.orangeAccent),
             textBox('Price\$ $price'),
             Divider(color: Colors.orangeAccent),
             textBox('Contact to $contact'),
@@ -78,6 +86,35 @@ class PostDetail extends StatelessWidget {
             fromBox('Posted by $user'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget label_boxes(){
+    if(labels == null){
+      return Center(child: Text('No labels'));
+    }
+    List<Widget> boxes = [];
+    var num = labels.length;
+    if(num > 4){
+      num = 4;
+    }
+    for(var i = 0; i < num; i++){
+      boxes.add(Container(
+        padding: EdgeInsets.all(3.0),
+        child: FlatButton(
+          color: Colors.black12,
+          child: Text(labels[i].toString()),
+          onPressed: (){
+
+          },
+        ),
+      ));
+    }
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: boxes,
       ),
     );
   }

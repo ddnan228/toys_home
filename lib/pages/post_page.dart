@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:toys_home/const_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,8 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:toys_home/components/rounded_button.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -40,6 +41,10 @@ class _PostPageState extends State<PostPage> {
   String price;
   String contact;
   String description;
+
+  List<String> image_labels = [];
+  List<Color> label_values = [];
+  String checked_labels = '';
 
   String locationInfo = 'Optional';
 
@@ -74,7 +79,8 @@ class _PostPageState extends State<PostPage> {
         onSelectNotification: onSelectNotification);
   }
 
-  Future onSelectNotification(String payload) async => await Navigator.push(
+  Future onSelectNotification(String payload) async =>
+      await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ListPage()),
       );
@@ -172,45 +178,6 @@ class _PostPageState extends State<PostPage> {
             SizedBox(
               height: 8.0,
             ),
-//            Row(
-//              children: <Widget>[
-//                SizedBox(
-//                  width: 20.0,
-//                ),
-//                Material(
-//                  elevation: 5.0,
-//                  color: Colors.green[200],
-//                  borderRadius: BorderRadius.circular(15.0),
-//                  child: MaterialButton(
-//                    onPressed: () {
-//                      //todo
-//                    },
-//                    minWidth: 100,
-//                    height: 30.0,
-//                    child: Text(
-//                      'Show your location',
-//                      style: TextStyle(
-//                        color: Colors.black,
-//                      ),
-//                    ),
-//                  ),
-//                ),
-//                SizedBox(
-//                  width: 10.0,
-//                ),
-//                Text(
-//                  locationInfo,
-//                  style: TextStyle(
-//                    fontSize: 15,
-//                    color: Colors.green[800],
-//                    fontWeight: FontWeight.bold,
-//                  ),
-//                ),
-//              ],
-//            ),
-//            SizedBox(
-//              height: 8.0,
-//            ),
             Row(
               children: <Widget>[
                 Padding(
@@ -257,6 +224,14 @@ class _PostPageState extends State<PostPage> {
                   await uploadImage(imageFile);
                 }
 
+                // save the checked labels into new list
+                List<String> labels = [];
+                for (var i = 0; i < label_values.length; i++) {
+                  if (label_values[i] == Colors.lightBlue) {
+                    labels.add(image_labels[i]);
+                  }
+                }
+
                 //post a new one, upload to database
                 await _firestore.collection('doudouPosts').add({
                   'userEmail': loggedInUser.email,
@@ -267,6 +242,7 @@ class _PostPageState extends State<PostPage> {
                   'postTime': DateTime.now(),
                   'postImageUrl': _uploadedImageUrl,
                   'postThumbnail': _uploadedThumbnail,
+                  'postLabels': labels,
                 });
                 uploadSpinner = false;
                 notifications.show(0, 'New Post', title, _ongoing);
@@ -287,12 +263,105 @@ class _PostPageState extends State<PostPage> {
         'No image selected',
       );
     } else {
-      return Image.file(
-        imageFile,
-        width: 300.0,
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Image.file(
+              imageFile,
+              width: 200.0,
+            ),
+          ),
+          SizedBox(
+            width: 20.0,
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                RaisedButton(
+                  color: Colors.green[200],
+                  child: Text('Generate Labels', style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.green[800],
+                  ),),
+                  onPressed: () {
+                    _showLabels(context);
+                  },
+                ),
+                //SizedBox(height: 10.0,),
+                Text(
+                  checked_labels,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     }
   }
+
+  Future<void> _showLabels(BuildContext context) async {
+    await get_label();
+
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            List<Widget> res = [];
+            for (var i = 0; i < image_labels.length; i++) {
+              res.add(Center(
+                child: GestureDetector(
+                  child: Text(
+                    image_labels[i],
+                    style: TextStyle(color: label_values[i]),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      label_values[i] = Colors.lightBlue;
+                    });
+                  },
+                ),
+              ));
+              res.add(Divider());
+            }
+
+            return AlertDialog(
+              title: Text('Choose Labels'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: res,
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    checked_labels = '';
+                    for (var j = 0; j < label_values.length; j++) {
+                      if (label_values[j] == Colors.lightBlue) {
+                        checked_labels += image_labels[j] + '\n';
+                      }
+                    }
+                    this.setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
 
   Widget phone_upload_button() {
     return FlatButton(
@@ -377,7 +446,7 @@ class _PostPageState extends State<PostPage> {
           .child('pose_$uuid.jpg');
       StorageUploadTask uploadTask = _storageRef.putFile(file);
       _uploadedImageUrl =
-          await (await uploadTask.onComplete).ref.getDownloadURL();
+      await (await uploadTask.onComplete).ref.getDownloadURL();
 
       //generate thumbnail and upload thumbnail
       img.Image image = img.decodeImage(file.readAsBytesSync());
@@ -391,9 +460,9 @@ class _PostPageState extends State<PostPage> {
           .child('postImages')
           .child('pose_thumbnail_$uuid.png');
       StorageUploadTask uploadTask2 =
-          _storageRef2.putFile(File('${file.path}.png'));
+      _storageRef2.putFile(File('${file.path}.png'));
       _uploadedThumbnail =
-          await (await uploadTask2.onComplete).ref.getDownloadURL();
+      await (await uploadTask2.onComplete).ref.getDownloadURL();
     } catch (e) {
       print('error in uploading image to storage.');
     }
@@ -411,5 +480,17 @@ class _PostPageState extends State<PostPage> {
     );
     final iOSChannelSpecifics = IOSNotificationDetails();
     return NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
+  }
+
+  get_label() async {
+    image_labels.clear();
+    label_values.clear();
+    FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(imageFile);
+    ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
+    List<ImageLabel> labels = await labeler.processImage(visionImage);
+    for (ImageLabel label in labels) {
+      image_labels.add(label.text);
+      label_values.add(Colors.black);
+    }
   }
 }

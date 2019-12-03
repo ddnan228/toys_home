@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 
-
 class PostBox extends StatelessWidget {
-  PostBox({this.user, this.title, this.price, this.contact, this.onPressed, this.imageUrl, this.colour});
+  PostBox(
+      {this.user,
+      this.title,
+      this.price,
+      this.contact,
+      this.onPressed,
+      this.imageUrl,
+      this.colour,
+      this.labels});
 
   final String user;
   final String title;
@@ -11,6 +18,8 @@ class PostBox extends StatelessWidget {
   final Function onPressed;
   final String imageUrl;
   final Color colour;
+  final List<dynamic> labels;
+  String label_text = '';
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +34,14 @@ class PostBox extends StatelessWidget {
           child: Row(
             children: <Widget>[
               SizedBox(
-                width: 20.0,
+                width: 10.0,
               ),
               CircleAvatar(
                 radius: 30.0,
                 backgroundColor: Colors.transparent,
-                backgroundImage: imageUrl == null ? AssetImage('images/teddy-bear_default_icon.png') : NetworkImage(imageUrl),
+                backgroundImage: imageUrl == null
+                    ? AssetImage('images/teddy-bear_default_icon.png')
+                    : NetworkImage(imageUrl),
               ),
               SizedBox(
                 width: 20.0,
@@ -52,7 +63,11 @@ class PostBox extends StatelessWidget {
                       ),
                       Row(
                         children: <Widget>[
-                          Icon(Icons.attach_money, color: Colors.orange, size: 20.0,),
+                          Icon(
+                            Icons.attach_money,
+                            color: Colors.orange,
+                            size: 20.0,
+                          ),
                           Text(
                             '$price',
                             style: TextStyle(
@@ -62,7 +77,11 @@ class PostBox extends StatelessWidget {
                           SizedBox(
                             width: 30.0,
                           ),
-                          Icon(Icons.phone, color: Colors.orange, size: 20.0,),
+                          Icon(
+                            Icons.phone,
+                            color: Colors.orange,
+                            size: 20.0,
+                          ),
                           Text(
                             '$contact',
                             style: TextStyle(
@@ -71,17 +90,65 @@ class PostBox extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text('From $user',style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.grey,
-                      ),),
+                      get_labels(),
+                      Text(
+                        'From $user',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
+
+
+
+
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget get_labels() {
+    if (labels == null) {
+      return Container();
+    }
+
+    var num = labels.length;
+    if (num > 3) {
+      num = 3;
+    }
+    List<Widget> boxes = [];
+    for (var i = 0; i < num; i++) {
+      boxes.add(Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.orange,
+          child: Container(
+            child: Center(
+              child: Text(
+                labels[i].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ));
+    }
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: Row(
+        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //crossAxisAlignment: CrossAxisAlignment.end,
+        children: boxes,
       ),
     );
   }

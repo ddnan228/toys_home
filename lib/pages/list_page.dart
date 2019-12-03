@@ -89,6 +89,7 @@ class _ListPageState extends State<ListPage> {
                   contact: post.data['postContact'],
                   imageUrl: post.data['postThumbnail'],
                   colour: Colors.amber[200],
+                  labels: post.data['postLabels'],
                   onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) {
                       return PostDetail(
@@ -98,6 +99,7 @@ class _ListPageState extends State<ListPage> {
                         contact: post.data['postContact'],
                         description: post.data['postDescription'],
                         imageUrl: post.data['postImageUrl'],
+                        labels: post.data['postLabels'],
                       );
                     }));
                   },

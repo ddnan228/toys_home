@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toys_home/components/post_box.dart';
 import 'post_detail.dart';
 
+
 class MyPostsPage extends StatefulWidget {
   static String id = 'my_posts';
 
@@ -94,6 +95,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                     contact: post.data['postContact'],
                     imageUrl: post.data['postThumbnail'],
                     colour: Colors.lime[200],
+                    labels: post.data['postLabels'],
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
@@ -104,6 +106,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                               contact: post.data['postContact'],
                               description: post.data['postDescription'],
                               imageUrl: post.data['postImageUrl'],
+                              labels: post.data['postLabels'],
                             );
                           }));
                     },
