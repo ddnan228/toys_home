@@ -4,6 +4,7 @@ import 'package:toys_home/components/labels_row.dart';
 import 'package:toys_home/components/post_item.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 class PostDetail extends StatefulWidget {
   PostDetail({
@@ -108,6 +109,33 @@ class _PostDetailState extends State<PostDetail> {
             textBox('Price\$ ${detail.price}'),
             Divider(color: Colors.orangeAccent),
             textBox('Contact to ${detail.contact}'),
+            SizedBox(height: 5.0,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(
+                    Icons.phone,
+                    color: Colors.orange,
+                  ),
+                  onTap: (){
+                    _phone_call();
+                  },
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                GestureDetector(
+                  child: Icon(
+                    Icons.message,
+                    color: Colors.orange,
+                  ),
+                  onTap: (){
+                    _message_to();
+                  },
+                ),
+              ],
+            ),
             Divider(color: Colors.orangeAccent),
             textBox('${detail.contact}'),
             Divider(color: Colors.orangeAccent),
@@ -120,6 +148,23 @@ class _PostDetailState extends State<PostDetail> {
         ),
       ),
     );
+  }
+
+  _phone_call() async{
+    if(await UrlLauncher.canLaunch('tel:${detail.contact}')){
+      await UrlLauncher.launch('tel:${detail.contact}');
+    }else{
+      throw 'can not launch';
+    }
+  }
+
+  _message_to() async{
+    if(await UrlLauncher.canLaunch('sms:${detail.contact}')){
+      await UrlLauncher.launch('sms:${detail.contact}');
+    }else{
+      throw 'can not launch';
+    }
+
   }
 
   Widget show_location() {
