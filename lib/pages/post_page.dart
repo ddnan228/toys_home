@@ -231,7 +231,7 @@ class _PostPageState extends State<PostPage> {
                   'postPrice': price,
                   'postContact': contact,
                   'postDescription': description,
-                  'postTime': DateTime.now(),
+                  'postTime': DateTime.now().toString().substring(0,19),
                   'postImageUrl': _uploadedImageUrl,
                   'postThumbnail': _uploadedThumbnail,
                   'postLabels': checked_labels,
@@ -298,22 +298,15 @@ class _PostPageState extends State<PostPage> {
     List<Widget> lists = [];
     var num = checked_labels.length;
     var i = 0;
-    for (; i < num - 2; i = i + 2) {
+    for (; i < num ; i ++) {
       lists.add(LablesRow(
-        labels: checked_labels.sublist(i, i + 2),
+        labels: checked_labels.sublist(i, i + 1),
         len: 2,
         align: MainAxisAlignment.center,
         colour: Colors.green,
-        fontsize: 15.0,
+        fontsize: 14.0,
       ));
     }
-    lists.add(LablesRow(
-      labels: checked_labels.sublist(i, num),
-      len: num - i,
-      align: MainAxisAlignment.center,
-      colour: Colors.green,
-      fontsize: 15.0,
-    ));
     return Column(
       children: lists,
     );

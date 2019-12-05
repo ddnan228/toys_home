@@ -100,6 +100,7 @@ class _ListPageState extends State<ListPage> {
                         description: post.data['postDescription'],
                         imageUrl: post.data['postImageUrl'],
                         labels: post.data['postLabels'],
+                        time: post.data['postTime'],
                       );
                     }));
                   },

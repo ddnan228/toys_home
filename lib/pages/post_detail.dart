@@ -10,7 +10,8 @@ class PostDetail extends StatelessWidget {
       this.contact,
       this.description,
       this.imageUrl,
-      this.labels});
+      this.labels,
+      this.time});
 
   final String user;
   final String title;
@@ -19,6 +20,7 @@ class PostDetail extends StatelessWidget {
   final String description;
   final String imageUrl;
   final List<dynamic> labels;
+  final String time;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,8 @@ class PostDetail extends StatelessWidget {
             textBox('Contact to $contact'),
             Divider(color: Colors.orangeAccent),
             textBox('$description'),
+            Divider(color: Colors.orangeAccent),
+            textBox('Post at $time'),
             Divider(color: Colors.orangeAccent),
             fromBox('Posted by $user'),
           ],
