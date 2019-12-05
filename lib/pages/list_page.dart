@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toys_home/components/post_item.dart';
 import 'package:toys_home/pages/user_profile.dart';
 import 'post_page.dart';
 import 'package:toys_home/components/bottom_appbar.dart';
@@ -90,17 +91,22 @@ class _ListPageState extends State<ListPage> {
                   imageUrl: post.data['postThumbnail'],
                   colour: Colors.amber[200],
                   labels: post.data['postLabels'],
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
                       return PostDetail(
-                        title: post.data['postTitle'],
-                        user: post.data['userEmail'],
-                        price: post.data['postPrice'],
-                        contact: post.data['postContact'],
-                        description: post.data['postDescription'],
-                        imageUrl: post.data['postImageUrl'],
-                        labels: post.data['postLabels'],
-                        time: post.data['postTime'],
+                        detail: PostItem(
+                          title: post.data['postTitle'],
+                          user: post.data['userEmail'],
+                          price: post.data['postPrice'],
+                          contact: post.data['postContact'],
+                          description: post.data['postDescription'],
+                          imageUrl: post.data['postImageUrl'],
+                          labels: post.data['postLabels'],
+                          time: post.data['postTime'],
+                          latitude: post.data['latitude'],
+                          longitude: post.data['longitude'],
+                        ),
                       );
                     }));
                   },
@@ -122,12 +128,13 @@ class _ListPageState extends State<ListPage> {
           third_icon_color: Colors.black12,
           third_Onpressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return UserProfile(email: loggedInUser.email,);
+              return UserProfile(
+                email: loggedInUser.email,
+              );
             }));
           },
         ),
       ),
     );
-
   }
 }

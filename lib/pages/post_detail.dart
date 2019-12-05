@@ -1,26 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:toys_home/components/labels_row.dart';
+import 'package:toys_home/components/post_item.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class PostDetail extends StatelessWidget {
-  PostDetail(
-      {this.user,
-      this.price,
-      this.title,
-      this.contact,
-      this.description,
-      this.imageUrl,
-      this.labels,
-      this.time});
+class PostDetail extends StatefulWidget {
+  PostDetail({
+    this.detail,
+  });
 
-  final String user;
-  final String title;
-  final String price;
-  final String contact;
-  final String description;
-  final String imageUrl;
-  final List<dynamic> labels;
-  final String time;
+  final PostItem detail;
+
+  _PostDetailState createState() => _PostDetailState(detail: detail);
+}
+
+class _PostDetailState extends State<PostDetail> {
+  _PostDetailState({this.detail});
+  final PostItem detail;
+  String address;
+
+  GoogleMapController mapController;
+  LatLng _center;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (detail.latitude != null && detail.longitude != null) {
+      _getAddress();
+    }
+  }
+
+  _getAddress() async {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          detail.latitude, detail.longitude);
+      Placemark place = p[0];
+      setState(() {
+        address = '${place.locality}, ${place.postalCode}, ${place.country}';
+        _center = LatLng(detail.latitude, detail.longitude);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +79,9 @@ class PostDetail extends StatelessWidget {
               color: Colors.amber[200],
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: imageUrl == null
+                child: detail.imageUrl == null
                     ? Image.asset('images/teddy-default.png')
-                    : Image.network(imageUrl),
+                    : Image.network(detail.imageUrl),
               ),
             ),
             SizedBox(
@@ -63,7 +91,7 @@ class PostDetail extends StatelessWidget {
               child: Container(
                   padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                   child: Text(
-                    title,
+                    detail.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.orange[800],
@@ -77,31 +105,65 @@ class PostDetail extends StatelessWidget {
             ),
             get_all_label_row(),
             Divider(color: Colors.orangeAccent),
-            textBox('Price\$ $price'),
+            textBox('Price\$ ${detail.price}'),
             Divider(color: Colors.orangeAccent),
-            textBox('Contact to $contact'),
+            textBox('Contact to ${detail.contact}'),
             Divider(color: Colors.orangeAccent),
-            textBox('$description'),
+            textBox('${detail.contact}'),
             Divider(color: Colors.orangeAccent),
-            textBox('Post at $time'),
+            textBox('Post at ${detail.time}'),
             Divider(color: Colors.orangeAccent),
-            fromBox('Posted by $user'),
+            show_location(),
+            Divider(color: Colors.orangeAccent),
+            fromBox('Posted by ${detail.user}'),
           ],
         ),
       ),
     );
   }
 
+  Widget show_location() {
+    if (address == null) {
+      return textBox('User not showing Location');
+    } else {
+      return Column(
+        children: <Widget>[
+          textBox('Location: $address'),
+          Container(
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            height: 200.0,
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 12.0,
+              ),
+              markers: {
+                Marker(
+                  markerId: MarkerId('1'),
+                  position: _center,
+                  infoWindow: InfoWindow(
+                    title: 'I am Here',
+                  ),
+                )
+              },
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget get_all_label_row() {
-    if (labels == null) {
+    if (detail.labels == null) {
       return Container();
     }
     List<Widget> lists = [];
-    var num = labels.length;
+    var num = detail.labels.length;
     var i = 0;
     for (; i < num - 4; i = i + 4) {
       lists.add(LablesRow(
-        labels: labels.sublist(i, i + 4),
+        labels: detail.labels.sublist(i, i + 4),
         len: 4,
         align: MainAxisAlignment.center,
         colour: Colors.orange,
@@ -109,7 +171,7 @@ class PostDetail extends StatelessWidget {
       ));
     }
     lists.add(LablesRow(
-      labels: labels.sublist(i, num),
+      labels: detail.labels.sublist(i, num),
       len: num - i,
       align: MainAxisAlignment.center,
       colour: Colors.orange,
@@ -121,11 +183,11 @@ class PostDetail extends StatelessWidget {
   }
 
   Widget label_boxes() {
-    if (labels == null) {
+    if (detail.labels == null) {
       return Center(child: Text('No labels'));
     }
     List<Widget> boxes = [];
-    var num = labels.length;
+    var num = detail.labels.length;
     if (num > 4) {
       num = 4;
     }
@@ -134,7 +196,7 @@ class PostDetail extends StatelessWidget {
         padding: EdgeInsets.all(3.0),
         child: FlatButton(
           color: Colors.black12,
-          child: Text(labels[i].toString()),
+          child: Text(detail.labels[i].toString()),
           onPressed: () {},
         ),
       ));

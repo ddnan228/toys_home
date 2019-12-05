@@ -16,6 +16,8 @@ import 'package:toys_home/components/rounded_button.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:toys_home/components/labels_row.dart';
 
+import 'package:geolocator/geolocator.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //void main() => runApp(PostPage());
@@ -43,6 +45,10 @@ class _PostPageState extends State<PostPage> {
   String contact;
   String description;
 
+  Position _currentPosition;
+  List<double> location;
+  bool share_location = true;
+
   List<String> image_labels = [];
   List<Color> label_values = [];
   List<String> checked_labels = [];
@@ -55,6 +61,7 @@ class _PostPageState extends State<PostPage> {
   void initState() {
     super.initState();
     getCurrentUser();
+   // _getCurrentLocation();
     initializeNotification();
   }
 
@@ -179,6 +186,18 @@ class _PostPageState extends State<PostPage> {
             SizedBox(
               height: 8.0,
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+              child: CheckboxListTile(
+                title: Text('Share my location'),
+                value: share_location,
+                onChanged: (bool value){
+                  setState(() {
+                    share_location = value;
+                  });
+                },
+              ),
+            ),
             Row(
               children: <Widget>[
                 Padding(
@@ -224,6 +243,18 @@ class _PostPageState extends State<PostPage> {
                 if (imageFile != null) {
                   await uploadImage(imageFile);
                 }
+
+                //share location
+                double latitude;
+                double longitude;
+                if(share_location == true) {
+                  await _getCurrentLocation();
+                  if (_currentPosition != null) {
+                    latitude = _currentPosition.latitude;
+                    longitude = _currentPosition.longitude;
+                  }
+                }
+
                 //post a new one, upload to database
                 await _firestore.collection('doudouPosts').add({
                   'userEmail': loggedInUser.email,
@@ -235,6 +266,9 @@ class _PostPageState extends State<PostPage> {
                   'postImageUrl': _uploadedImageUrl,
                   'postThumbnail': _uploadedThumbnail,
                   'postLabels': checked_labels,
+                  'latitude': latitude,
+                  'longitude':longitude,
+
                 });
                 uploadSpinner = false;
                 notifications.show(0, 'New Post', title, _ongoing);
@@ -247,6 +281,20 @@ class _PostPageState extends State<PostPage> {
         ),
       ),
     );
+  }
+
+  _getCurrentLocation() async {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    await geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      _currentPosition = position;
+    }).catchError((e) {
+      print(e);
+    });
+    print(_currentPosition.latitude);
+    print(_currentPosition.longitude);
   }
 
   Widget _showPic() {
@@ -367,7 +415,6 @@ class _PostPageState extends State<PostPage> {
       },
     );
   }
-
 
   Widget phone_upload_button() {
     return FlatButton(

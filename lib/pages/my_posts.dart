@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toys_home/components/post_box.dart';
 import 'post_detail.dart';
+import 'package:toys_home/components/post_item.dart';
 
 
 class MyPostsPage extends StatefulWidget {
@@ -100,13 +101,18 @@ class _MyPostsPageState extends State<MyPostsPage> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                             return PostDetail(
-                              title: post.data['postTitle'],
-                              user: post.data['userEmail'],
-                              price: post.data['postPrice'],
-                              contact: post.data['postContact'],
-                              description: post.data['postDescription'],
-                              imageUrl: post.data['postImageUrl'],
-                              labels: post.data['postLabels'],
+                              detail: PostItem(
+                                title: post.data['postTitle'],
+                                user: post.data['userEmail'],
+                                price: post.data['postPrice'],
+                                contact: post.data['postContact'],
+                                description: post.data['postDescription'],
+                                imageUrl: post.data['postImageUrl'],
+                                labels: post.data['postLabels'],
+                                time: post.data['postTime'],
+                                latitude: post.data['latitude'],
+                                longitude: post.data['longitude'],
+                              ),
                             );
                           }));
                     },

@@ -23,6 +23,8 @@ dependencies:
   firebase_ml_vision: ^0.9.3+3
 
   flutter_local_notifications: ^0.8.4+3
+  geolocator: ^5.1.3
+  google_maps_flutter: ^0.5.11
 
   flutter_native_image:
     git: https://github.com/btastic/flutter_native_image.git
