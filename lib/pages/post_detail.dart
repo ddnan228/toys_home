@@ -137,7 +137,10 @@ class _PostDetailState extends State<PostDetail> {
               ],
             ),
             Divider(color: Colors.orangeAccent),
-            textBox('${detail.contact}'),
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+              child: textBox('${detail.description}'),
+            ),
             Divider(color: Colors.orangeAccent),
             textBox('Post at ${detail.time}'),
             Divider(color: Colors.orangeAccent),
