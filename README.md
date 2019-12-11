@@ -2,6 +2,10 @@
 
 A used toys resell smart phone application
 
+Final Project for INFO 6350
+
+Author: Doudou Nan, Shihui Chen
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
