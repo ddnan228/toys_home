@@ -2,15 +2,14 @@
 
 A used toys resell smart phone application
 
-## Getting Started
+Final Project for INFO 6350
 
-This project is a starting point for a Flutter application.
+Author: Doudou Nan, Shihui Chen
 
-A few resources to get you started if this is your first Flutter project:
+## Content
+Designed and built a flutter mobile application suitable for iOS and Android with animations and
+user interactive functions using Dart
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Built-up user authentication using Firebase, implemented labels auto-generation with ML kit
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Stored and retrieved data using Cloud Firestore and NoSQL Database
